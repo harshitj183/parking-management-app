@@ -1,0 +1,455 @@
+<%- contentFor('head') %>
+<!-- Include the QR scanner library -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Scan QR Code</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+    </div>
+    
+    <!-- Scanner Container -->
+    <div class="scanner-container">
+        <div id="qr-reader"></div>
+        <div id="qr-reader-results"></div>
+        
+        <!-- Error Message for Camera Access -->
+        <div id="camera-error" class="camera-error" style="display: none;">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="error-message">
+                <h6>Camera access error</h6>
+                <p>We couldn't access your camera. This could be due to:</p>
+                <ul>
+                    <li>Camera permissions denied</li>
+                    <li>No camera detected on your device</li>
+                    <li>Another application is using your camera</li>
+                </ul>
+            </div>
+            <button id="retry-camera" class="retry-btn">Try Again</button>
+            <div class="manual-option">
+                <p>Or enter parking code manually:</p>
+                <div class="manual-code-input">
+                    <input type="text" id="manual-code" placeholder="Enter code (e.g., PARK123)" class="form-control">
+                    <button id="submit-code" class="submit-btn">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="scanner-instructions">
+        <h6>How to scan:</h6>
+        <ul>
+            <li>Point your camera at the QR code at the parking entrance</li>
+            <li>Hold steady until the code is recognized</li>
+            <li>Once scanned, you'll be directed to the booking page</li>
+        </ul>
+    </div>
+    
+    <!-- Recent Scans -->
+    <div class="recent-scans">
+        <h6>Recent Scans</h6>
+        
+        <div class="scan-history">
+            <div class="scan-item">
+                <div class="scan-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <div class="scan-details">
+                    <div class="scan-location">Illinois Center</div>
+                    <div class="scan-time">Apr 24, 2025 - 2:34 PM</div>
+                </div>
+                <a href="/booking/form/illinois-center" class="scan-action">
+                    Book
+                </a>
+            </div>
+            
+            <div class="scan-item">
+                <div class="scan-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <div class="scan-details">
+                    <div class="scan-location">Park N Jet</div>
+                    <div class="scan-time">Apr 20, 2025 - 9:15 AM</div>
+                </div>
+                <a href="/booking/form/park-n-jet" class="scan-action">
+                    Book
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <i class="fas fa-home nav-icon"></i>
+        <span>Home</span>
+    </a>
+    <a href="/saved" class="nav-item">
+        <i class="far fa-heart nav-icon"></i>
+        <span>Saved</span>
+    </a>
+    <a href="/scan" class="nav-item active">
+        <button class="fab-button active">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    </a>
+    <a href="/booking/parkings" class="nav-item">
+        <i class="fas fa-ticket-alt nav-icon"></i>
+        <span>Bookings</span>
+    </a>
+    <a href="/profile" class="nav-item">
+        <i class="far fa-user nav-icon"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const qrReaderElement = document.getElementById('qr-reader');
+        const cameraErrorElement = document.getElementById('camera-error');
+        const retryButton = document.getElementById('retry-camera');
+        const submitCodeButton = document.getElementById('submit-code');
+        const manualCodeInput = document.getElementById('manual-code');
+        let html5QrcodeScanner;
+        
+        // QR code scanner configuration
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle the scanned code
+            const resultsContainer = document.getElementById('qr-reader-results');
+            resultsContainer.innerHTML = `
+                <div class="scan-success">
+                    <div class="scan-success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="scan-success-message">
+                        <h5>Scan Successful!</h5>
+                        <p>Parking location detected. Redirecting...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Save to scan history
+            addToScanHistory("Illinois Center");
+            
+            // In a real app, parse the QR code data to determine the parking location
+            // For demo, we'll redirect to Illinois Center after a short delay
+            setTimeout(() => {
+                window.location.href = '/booking/form/illinois-center';
+            }, 2000);
+        }
+
+        function onScanFailure(error) {
+            // We only want to show the error UI for permission/device errors
+            if (error.includes('NotFoundError') || error.includes('NotAllowedError')) {
+                showCameraError();
+            }
+            console.warn(`QR scan error: ${error}`);
+        }
+
+        function initScanner() {
+            try {
+                // Hide error message if it was previously shown
+                cameraErrorElement.style.display = 'none';
+                qrReaderElement.style.display = 'block';
+                
+                // Initialize QR scanner
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "qr-reader",
+                    { 
+                        fps: 10, 
+                        qrbox: {width: 250, height: 250},
+                        rememberLastUsedCamera: true,
+                        showTorchButtonIfSupported: true
+                    },
+                    /* verbose= */ false
+                );
+                
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            } catch (error) {
+                console.error("Failed to initialize scanner:", error);
+                showCameraError();
+            }
+        }
+        
+        function showCameraError() {
+            // Hide QR reader and show error message
+            qrReaderElement.style.display = 'none';
+            cameraErrorElement.style.display = 'block';
+        }
+        
+        // Initialize scanner when page loads
+        initScanner();
+        
+        // Retry button click handler
+        retryButton.addEventListener('click', function() {
+            // If there was a previous scanner instance, clear it
+            if (html5QrcodeScanner) {
+                try {
+                    html5QrcodeScanner.clear();
+                } catch (error) {
+                    console.warn("Error clearing scanner:", error);
+                }
+            }
+            
+            // Re-initialize the scanner
+            initScanner();
+        });
+        
+        // Submit manual code button click handler
+        submitCodeButton.addEventListener('click', function() {
+            const code = manualCodeInput.value.trim();
+            
+            if (code) {
+                // Show success message
+                const resultsContainer = document.getElementById('qr-reader-results');
+                resultsContainer.innerHTML = `
+                    <div class="scan-success">
+                        <div class="scan-success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="scan-success-message">
+                            <h5>Code Accepted!</h5>
+                            <p>Code "${code}" is valid. Redirecting...</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Save to scan history and redirect
+                addToScanHistory("Manual Entry - Illinois Center");
+                
+                setTimeout(() => {
+                    window.location.href = '/booking/form/illinois-center';
+                }, 2000);
+            } else {
+                alert("Please enter a valid code");
+            }
+        });
+
+        // Store scan history in local storage (in a real app, this would be server-side)
+        function addToScanHistory(location) {
+            const now = new Date();
+            const scanDate = now.toLocaleDateString('en-US', {
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric'
+            });
+            const scanTime = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const scanItem = {
+                location: location,
+                dateTime: `${scanDate} - ${scanTime}`
+            };
+            
+            let scanHistory = JSON.parse(localStorage.getItem('scanHistory') || '[]');
+            scanHistory.unshift(scanItem); // Add to beginning
+            
+            // Keep only last 5 items
+            if (scanHistory.length > 5) {
+                scanHistory = scanHistory.slice(0, 5);
+            }
+            
+            localStorage.setItem('scanHistory', JSON.stringify(scanHistory));
+        }
+        
+        // For demo purposes, simulate a new scan
+        document.querySelector('.scan-icon').addEventListener('click', function() {
+            addToScanHistory('AON Center');
+            alert('Simulating a new scan!');
+        });
+    });
+</script>
+
+<style>
+    .scanner-container {
+        margin: 20px 0;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    #qr-reader {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    #qr-reader-results {
+        padding: 15px 0;
+    }
+    
+    .camera-error {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #ffc107;
+    }
+    
+    .error-icon {
+        font-size: 40px;
+        color: #ffc107;
+        margin-bottom: 15px;
+    }
+    
+    .error-message h6 {
+        margin-bottom: 10px;
+    }
+    
+    .error-message ul {
+        text-align: left;
+        margin: 15px auto;
+        max-width: 280px;
+    }
+    
+    .retry-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 20px;
+        font-weight: 500;
+        margin: 15px 0;
+    }
+    
+    .manual-option {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    .manual-code-input {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .manual-code-input input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 15px;
+    }
+    
+    .scanner-instructions {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .scanner-instructions ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+    
+    .scanner-instructions li {
+        margin-bottom: 5px;
+    }
+    
+    .scan-history {
+        margin-top: 10px;
+    }
+    
+    .scan-item {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .scan-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(130, 0, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        margin-right: 15px;
+    }
+    
+    .scan-details {
+        flex: 1;
+    }
+    
+    .scan-location {
+        font-weight: 600;
+    }
+    
+    .scan-time {
+        font-size: 12px;
+        color: var(--text-light);
+    }
+    
+    .scan-action {
+        padding: 6px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .scan-success {
+        display: flex;
+        align-items: center;
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .scan-success-icon {
+        font-size: 24px;
+        margin-right: 15px;
+    }
+    
+    .scan-success-message h5 {
+        margin-bottom: 5px;
+    }
+    
+    .scan-success-message p {
+        margin-bottom: 0;
+    }
+    
+    /* Hide QR scanner unnecessary elements */
+    #qr-reader__dashboard_section_csr button {
+        background-color: var(--primary-color) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+    }
+    
+    #qr-reader__status_span {
+        display: none !important;
+    }
+</style>

@@ -1,0 +1,260 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the slot selection page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container slot-selection-page">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/booking/form/illinois-center" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Illinois Center</h5>
+            <p class="small text-muted mb-0">111 E Wacker Dr, Chicago</p>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-info"></i>
+        </button>
+    </div>
+    
+    <!-- Floor Selection -->
+    <div class="floor-selector">
+        <button class="floor-option">G Floor</button>
+        <button class="floor-option active">1<sup>st</sup> Floor</button>
+        <button class="floor-option">2<sup>nd</sup> Floor</button>
+        <button class="floor-option">3<sup>rd</sup> Floor</button>
+    </div>
+    
+    <!-- Section Navigation -->
+    <div class="section-header px-3">
+        <h6 class="section-title mb-0">A & B Slots</h6>
+        <div class="section-navigation">
+            <button class="section-nav-button">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="section-nav-button">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Parking Layout -->
+    <div class="parking-layout px-3">
+        <div class="text-center mb-3 small text-muted">ENTRY</div>
+        
+        <div class="d-flex position-relative mb-4">
+            <!-- A Section -->
+            <div class="slot-column me-3">
+                <div class="slot-row">
+                    <div class="slot-label">A 01</div>
+                    <div class="parking-slot occupied">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">A 02</div>
+                    <div class="parking-slot">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">A 03</div>
+                    <div class="parking-slot occupied">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">A 05</div>
+                    <div class="parking-slot occupied">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">A 07</div>
+                    <div class="parking-slot">
+                        <div class="slot-car"></div>
+                        <div class="slot-accessible">
+                            <i class="fas fa-wheelchair"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lane -->
+            <div class="lane flex-grow-1">
+                <div class="direction-indicator direction-down">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                <div class="direction-indicator direction-up">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+            
+            <!-- B Section -->
+            <div class="slot-column ms-3">
+                <div class="slot-row">
+                    <div class="slot-label">B 02</div>
+                    <div class="parking-slot">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">B 03</div>
+                    <div class="parking-slot selected">
+                        <div class="slot-car"></div>
+                        <span class="selected-text">Selected</span>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">B 04</div>
+                    <div class="parking-slot">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">B 05</div>
+                    <div class="parking-slot">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-row">
+                    <div class="slot-label">B 06</div>
+                    <div class="parking-slot occupied">
+                        <div class="slot-car"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Next Button -->
+    <div class="fixed-bottom p-3">
+        <div class="d-grid">
+            <button class="btn-next" onclick="window.location.href='/booking/confirmation/123'">Next</button>
+        </div>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Floor selection
+        const floorOptions = document.querySelectorAll('.floor-option');
+        floorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                floorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Slot selection
+        const parkingSlots = document.querySelectorAll('.parking-slot:not(.occupied)');
+        parkingSlots.forEach(slot => {
+            slot.addEventListener('click', function() {
+                parkingSlots.forEach(s => {
+                    s.classList.remove('selected');
+                    const selectedText = s.querySelector('.selected-text');
+                    if (selectedText) selectedText.remove();
+                });
+                
+                this.classList.add('selected');
+                
+                // Add selected text
+                if (!this.querySelector('.selected-text')) {
+                    const selectedText = document.createElement('span');
+                    selectedText.classList.add('selected-text');
+                    selectedText.textContent = 'Selected';
+                    this.appendChild(selectedText);
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .slot-selection-page .page-header {
+        border-bottom: 1px solid #333;
+    }
+    
+    .slot-column {
+        width: 80px;
+    }
+    
+    .slot-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .slot-label {
+        width: 40px;
+        font-size: 0.8rem;
+        color: #bbb;
+        margin-right: 10px;
+    }
+    
+    .parking-slot {
+        width: 30px;
+        height: 60px;
+        position: relative;
+        border: 1px solid #444;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .parking-slot.occupied {
+        background-color: #2a2a2a;
+    }
+    
+    .parking-slot.occupied .slot-car {
+        background-color: #555;
+    }
+    
+    .parking-slot.selected {
+        border-color: var(--yellow-accent);
+        background-color: rgba(255, 222, 89, 0.1);
+    }
+    
+    .slot-car {
+        width: 20px;
+        height: 40px;
+        background-color: #666;
+        border-radius: 3px;
+    }
+    
+    .selected-text {
+        position: absolute;
+        bottom: -20px;
+        font-size: 0.7rem;
+        color: var(--yellow-accent);
+        white-space: nowrap;
+    }
+    
+    .lane {
+        height: 50px;
+        background-color: #2a2a2a;
+        position: relative;
+        margin-top: 10px;
+    }
+    
+    .lane::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, var(--yellow-accent) 50%, transparent 50%);
+        background-size: 10px 1px;
+    }
+</style>

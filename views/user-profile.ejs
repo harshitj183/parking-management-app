@@ -1,0 +1,1428 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the user profile page -->
+<script src="/js/dark-mode.js" defer></script>
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">My Profile</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+    </div>
+    
+    <!-- User Profile Section -->
+    <div class="user-profile-section">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                <img src="/images/avatar-placeholder.jpg" alt="User Avatar" onerror="this.src='/images/avatar-placeholder.jpg'">
+                <div class="avatar-edit">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <div class="profile-info">
+                <h4>Harshit Jaiswal</h4>
+                <p class="text-muted mb-0">harshit.jaiswal@example.com</p>
+                <button class="edit-profile-btn">Edit Profile</button>
+            </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Saved Locations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$154</div>
+                <div class="stat-label">Spent</div>
+            </div>
+        </div>
+        
+        <!-- Menu Options -->
+        <div class="profile-menu">
+            <a href="#" class="menu-item" id="accountSettings">
+                <div class="menu-icon">
+                    <i class="far fa-user"></i>
+                </div>
+                <div class="menu-label">Account Settings</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <a href="#" class="menu-item" id="myVehicles">
+                <div class="menu-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="menu-label">My Vehicles</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <a href="#" class="menu-item" id="paymentMethods">
+                <div class="menu-icon">
+                    <i class="far fa-credit-card"></i>
+                </div>
+                <div class="menu-label">Payment Methods</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <a href="#" class="menu-item" id="notifications">
+                <div class="menu-icon">
+                    <i class="far fa-bell"></i>
+                </div>
+                <div class="menu-label">Notifications</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <a href="#" class="menu-item" id="helpSupport">
+                <div class="menu-icon">
+                    <i class="far fa-question-circle"></i>
+                </div>
+                <div class="menu-label">Help & Support</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <a href="#" class="menu-item" id="settings">
+                <div class="menu-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="menu-label">Settings</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <button class="logout-btn menu-item" id="logout">
+                <div class="menu-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="menu-label">Logout</div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" value="Harshit Jaiswal">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="harshit.jaiswal@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" value="+1 555-123-4567">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="2">123 Park Avenue, Chicago, IL 60007</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Account Settings Modal -->
+<div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Account Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="accountSettingsForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword">
+                    </div>
+                    <hr>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="darkMode">
+                        <label class="form-check-label" for="darkMode">Dark Mode</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                        <label class="form-check-label" for="emailNotifications">Email Notifications</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                        <label class="form-check-label" for="twoFactorAuth">Two-Factor Authentication</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveAccountSettings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- My Vehicles Modal -->
+<div class="modal fade" id="vehiclesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">My Vehicles</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="vehicle-list mb-3">
+                    <!-- Vehicle 1 -->
+                    <div class="vehicle-item">
+                        <div class="vehicle-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="vehicle-info">
+                            <h6 class="mb-0">Honda Civic</h6>
+                            <p class="text-muted mb-0">IL 7568</p>
+                        </div>
+                        <div class="vehicle-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-vehicle" data-vehicle-id="1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-vehicle" data-vehicle-id="1">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Vehicle 2 -->
+                    <div class="vehicle-item">
+                        <div class="vehicle-icon">
+                            <i class="fas fa-motorcycle"></i>
+                        </div>
+                        <div class="vehicle-info">
+                            <h6 class="mb-0">Yamaha MT-09</h6>
+                            <p class="text-muted mb-0">IL 8257</p>
+                        </div>
+                        <div class="vehicle-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-vehicle" data-vehicle-id="2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-vehicle" data-vehicle-id="2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="addVehicleBtn" class="btn btn-primary w-100">Add New Vehicle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Vehicle Modal -->
+<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vehicleModalTitle">Add New Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="vehicleForm">
+                    <input type="hidden" id="vehicleId">
+                    <div class="mb-3">
+                        <label for="vehicleType" class="form-label">Vehicle Type</label>
+                        <select class="form-select" id="vehicleType">
+                            <option value="Car">Car</option>
+                            <option value="Motorcycle">Motorcycle</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleModel" class="form-label">Make and Model</label>
+                        <input type="text" class="form-control" id="vehicleModel">
+                    </div>
+                    <div class="mb-3">
+                        <label for="licensePlate" class="form-label">License Plate</label>
+                        <input type="text" class="form-control" id="licensePlate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleColor" class="form-label">Color</label>
+                        <input type="text" class="form-control" id="vehicleColor">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveVehicleBtn">Save Vehicle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Methods Modal -->
+<div class="modal fade" id="paymentMethodsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Payment Methods</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-list mb-3">
+                    <!-- Card 1 -->
+                    <div class="payment-item">
+                        <div class="payment-icon">
+                            <i class="fab fa-cc-visa"></i>
+                        </div>
+                        <div class="payment-info">
+                            <h6 class="mb-0">Visa ending in 4242</h6>
+                            <p class="text-muted mb-0">Expires 12/25</p>
+                        </div>
+                        <div class="payment-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-payment" data-payment-id="1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-payment" data-payment-id="1">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="payment-item">
+                        <div class="payment-icon">
+                            <i class="fab fa-cc-mastercard"></i>
+                        </div>
+                        <div class="payment-info">
+                            <h6 class="mb-0">Mastercard ending in 5555</h6>
+                            <p class="text-muted mb-0">Expires 08/27</p>
+                        </div>
+                        <div class="payment-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-payment" data-payment-id="2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-payment" data-payment-id="2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="addPaymentBtn" class="btn btn-primary w-100">Add Payment Method</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Payment Modal -->
+<div class="modal fade" id="editPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalTitle">Add Payment Method</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <input type="hidden" id="paymentId">
+                    <div class="mb-3">
+                        <label for="cardholderName" class="form-label">Cardholder Name</label>
+                        <input type="text" class="form-control" id="cardholderName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="cardNumber" maxlength="19" placeholder="XXXX XXXX XXXX XXXX">
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cvv" maxlength="3">
+                        </div>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="defaultPayment">
+                        <label class="form-check-label" for="defaultPayment">Set as default payment method</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePaymentBtn">Save Payment Method</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications Modal -->
+<div class="modal fade" id="notificationsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notification Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="notificationsForm">
+                    <div class="notification-setting">
+                        <div class="notification-info">
+                            <h6>Parking Reminders</h6>
+                            <p class="text-muted mb-0">Receive reminders before your parking expires</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="parkingReminders" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-setting">
+                        <div class="notification-info">
+                            <h6>Special Offers</h6>
+                            <p class="text-muted mb-0">Get notified about discounts and offers</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="specialOffers" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-setting">
+                        <div class="notification-info">
+                            <h6>Booking Confirmation</h6>
+                            <p class="text-muted mb-0">Receive confirmation for new bookings</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="bookingConfirmation" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-setting">
+                        <div class="notification-info">
+                            <h6>Payment Alerts</h6>
+                            <p class="text-muted mb-0">Get notified about payment activities</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="paymentAlerts" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-setting">
+                        <div class="notification-info">
+                            <h6>App Updates</h6>
+                            <p class="text-muted mb-0">Get notified about new app features</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="appUpdates">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveNotifications">Save Settings</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help & Support Modal -->
+<div class="modal fade" id="helpSupportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Help & Support</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="support-sections">
+                    <div class="support-item" data-section="faq">
+                        <div class="support-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="support-info">
+                            <h6>FAQ</h6>
+                            <p>Find answers to commonly asked questions</p>
+                        </div>
+                        <div class="support-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item" data-section="contact">
+                        <div class="support-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="support-info">
+                            <h6>Contact Support</h6>
+                            <p>Get help from our support team</p>
+                        </div>
+                        <div class="support-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item" data-section="report">
+                        <div class="support-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="support-info">
+                            <h6>Report a Problem</h6>
+                            <p>Report issues with the application</p>
+                        </div>
+                        <div class="support-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item" data-section="terms">
+                        <div class="support-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="support-info">
+                            <h6>Terms of Service</h6>
+                            <p>Read our terms and conditions</p>
+                        </div>
+                        <div class="support-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item" data-section="privacy">
+                        <div class="support-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="support-info">
+                            <h6>Privacy Policy</h6>
+                            <p>Learn how we handle your data</p>
+                        </div>
+                        <div class="support-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form (Hidden by default) -->
+                <div id="contactForm" class="support-detail-section" style="display: none;">
+                    <button class="btn btn-sm btn-link back-to-support mb-3">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    
+                    <h5 class="mb-3">Contact Support</h5>
+                    <form>
+                        <div class="mb-3">
+                            <label for="supportSubject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="supportSubject">
+                        </div>
+                        <div class="mb-3">
+                            <label for="supportMessage" class="form-label">Message</label>
+                            <textarea class="form-control" id="supportMessage" rows="4"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="sendSupportMessage">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">App Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="settingsForm">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Dark Mode</h6>
+                            <p class="text-muted mb-0">Enable dark theme</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Language</h6>
+                            <p class="text-muted mb-0">Choose your preferred language</p>
+                        </div>
+                        <select class="form-select w-auto" id="languageSelect">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Distance Unit</h6>
+                            <p class="text-muted mb-0">Choose your preferred distance unit</p>
+                        </div>
+                        <select class="form-select w-auto" id="distanceUnit">
+                            <option value="km">Kilometers</option>
+                            <option value="mi" selected>Miles</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Parking Timer Alerts</h6>
+                            <p class="text-muted mb-0">Set when to receive parking expiry alerts</p>
+                        </div>
+                        <select class="form-select w-auto" id="timerAlerts">
+                            <option value="15">15 minutes before</option>
+                            <option value="30" selected>30 minutes before</option>
+                            <option value="60">1 hour before</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Location Services</h6>
+                            <p class="text-muted mb-0">Allow app to access your location</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="locationServices" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h6>Clear App Cache</h6>
+                            <p class="text-muted mb-0">Clear temporary data stored by the app</p>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="clearCache">Clear</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveSettings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmLogout">Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <i class="fas fa-home nav-icon"></i>
+        <span>Home</span>
+    </a>
+    <a href="/saved" class="nav-item">
+        <i class="far fa-heart nav-icon"></i>
+        <span>Saved</span>
+    </a>
+    <a href="/scan" class="nav-item">
+        <button class="fab-button">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    </a>
+    <a href="/booking/parkings" class="nav-item">
+        <i class="fas fa-ticket-alt nav-icon"></i>
+        <span>Bookings</span>
+    </a>
+    <a href="/profile" class="nav-item active">
+        <i class="fas fa-user nav-icon"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all modals
+        const modals = {
+            editProfile: new bootstrap.Modal(document.getElementById('editProfileModal')),
+            accountSettings: new bootstrap.Modal(document.getElementById('accountSettingsModal')),
+            vehicles: new bootstrap.Modal(document.getElementById('vehiclesModal')),
+            editVehicle: new bootstrap.Modal(document.getElementById('editVehicleModal')),
+            paymentMethods: new bootstrap.Modal(document.getElementById('paymentMethodsModal')),
+            editPayment: new bootstrap.Modal(document.getElementById('editPaymentModal')),
+            notifications: new bootstrap.Modal(document.getElementById('notificationsModal')),
+            helpSupport: new bootstrap.Modal(document.getElementById('helpSupportModal')),
+            settings: new bootstrap.Modal(document.getElementById('settingsModal')),
+            logout: new bootstrap.Modal(document.getElementById('logoutModal'))
+        };
+        
+        // Edit Profile Button
+        document.querySelector('.edit-profile-btn').addEventListener('click', function() {
+            modals.editProfile.show();
+        });
+        
+        // Profile Avatar Edit
+        document.getElementById('profileAvatar').addEventListener('click', function() {
+            // In a real app, this would open a file picker
+            alert('In a real app, this would allow you to upload a profile picture.');
+        });
+        
+        // Save Profile Changes
+        document.getElementById('saveProfileBtn').addEventListener('click', function() {
+            // Get form values
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            
+            // Update UI (in a real app, this would also update the server)
+            document.querySelector('.profile-info h4').textContent = fullName;
+            document.querySelector('.profile-info p').textContent = email;
+            
+            // Show success message and hide modal
+            alert('Profile updated successfully!');
+            modals.editProfile.hide();
+        });
+        
+        // Account Settings
+        document.getElementById('accountSettings').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.accountSettings.show();
+        });
+        
+        document.getElementById('saveAccountSettings').addEventListener('click', function() {
+            // Check if password fields are filled
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (currentPassword || newPassword || confirmPassword) {
+                // Validate passwords
+                if (!currentPassword) {
+                    alert('Please enter your current password');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match');
+                    return;
+                }
+                
+                if (newPassword && newPassword.length < 6) {
+                    alert('Password must be at least 6 characters long');
+                    return;
+                }
+                
+                // In a real app, we would verify the current password and update it
+                alert('Password updated successfully!');
+            }
+            
+            // Handle dark mode toggle using our new dark mode system
+            const darkMode = document.getElementById('darkMode').checked;
+            window.darkMode.setDarkMode(darkMode);
+            
+            // Handle other settings
+            const emailNotifications = document.getElementById('emailNotifications').checked;
+            const twoFactorAuth = document.getElementById('twoFactorAuth').checked;
+            
+            // In a real app, save these settings to the server
+            localStorage.setItem('emailNotifications', emailNotifications);
+            localStorage.setItem('twoFactorAuth', twoFactorAuth);
+            
+            // Close modal
+            modals.accountSettings.hide();
+        });
+        
+        // My Vehicles
+        document.getElementById('myVehicles').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.vehicles.show();
+        });
+        
+        document.getElementById('addVehicleBtn').addEventListener('click', function() {
+            // Reset form fields
+            document.getElementById('vehicleForm').reset();
+            document.getElementById('vehicleId').value = '';
+            document.getElementById('vehicleModalTitle').textContent = 'Add New Vehicle';
+            
+            // Show vehicle modal
+            modals.vehicles.hide();
+            modals.editVehicle.show();
+        });
+        
+        // Edit Vehicle
+        const editVehicleButtons = document.querySelectorAll('.edit-vehicle');
+        editVehicleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const vehicleId = this.dataset.vehicleId;
+                
+                // In a real app, we would fetch vehicle data from the server
+                // For demo, we'll use hard-coded sample data
+                let vehicleData = {};
+                
+                if (vehicleId === '1') {
+                    vehicleData = {
+                        type: 'Car',
+                        model: 'Honda Civic',
+                        plate: 'IL 7568',
+                        color: 'Blue'
+                    };
+                } else if (vehicleId === '2') {
+                    vehicleData = {
+                        type: 'Motorcycle',
+                        model: 'Yamaha MT-09',
+                        plate: 'IL 8257',
+                        color: 'Black'
+                    };
+                }
+                
+                // Fill form with vehicle data
+                document.getElementById('vehicleId').value = vehicleId;
+                document.getElementById('vehicleType').value = vehicleData.type;
+                document.getElementById('vehicleModel').value = vehicleData.model;
+                document.getElementById('licensePlate').value = vehicleData.plate;
+                document.getElementById('vehicleColor').value = vehicleData.color;
+                
+                // Update modal title
+                document.getElementById('vehicleModalTitle').textContent = 'Edit Vehicle';
+                
+                // Show edit vehicle modal
+                modals.vehicles.hide();
+                modals.editVehicle.show();
+            });
+        });
+        
+        // Save Vehicle
+        document.getElementById('saveVehicleBtn').addEventListener('click', function() {
+            // Get form data
+            const vehicleId = document.getElementById('vehicleId').value;
+            const vehicleType = document.getElementById('vehicleType').value;
+            const vehicleModel = document.getElementById('vehicleModel').value;
+            const licensePlate = document.getElementById('licensePlate').value;
+            
+            // Validate required fields
+            if (!vehicleModel || !licensePlate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // In a real app, we would save this data to the server
+            // For demo purposes, just show success message
+            if (vehicleId) {
+                alert(`Vehicle ${licensePlate} updated successfully!`);
+            } else {
+                alert(`New vehicle ${licensePlate} added successfully!`);
+            }
+            
+            // Close modal and show vehicles list
+            modals.editVehicle.hide();
+            modals.vehicles.show();
+        });
+        
+        // Delete Vehicle
+        const deleteVehicleButtons = document.querySelectorAll('.delete-vehicle');
+        deleteVehicleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const vehicleId = this.dataset.vehicleId;
+                
+                if (confirm('Are you sure you want to delete this vehicle?')) {
+                    // In a real app, we would send a delete request to the server
+                    
+                    // For demo, just hide the element
+                    this.closest('.vehicle-item').style.display = 'none';
+                    alert('Vehicle deleted successfully!');
+                }
+            });
+        });
+        
+        // Payment Methods
+        document.getElementById('paymentMethods').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.paymentMethods.show();
+        });
+        
+        document.getElementById('addPaymentBtn').addEventListener('click', function() {
+            // Reset form
+            document.getElementById('paymentForm').reset();
+            document.getElementById('paymentId').value = '';
+            document.getElementById('paymentModalTitle').textContent = 'Add Payment Method';
+            
+            // Show payment modal
+            modals.paymentMethods.hide();
+            modals.editPayment.show();
+        });
+        
+        // Edit Payment
+        const editPaymentButtons = document.querySelectorAll('.edit-payment');
+        editPaymentButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const paymentId = this.dataset.paymentId;
+                
+                // In a real app, we would fetch payment data from the server
+                // For demo, we'll use hard-coded sample data
+                let paymentData = {};
+                
+                if (paymentId === '1') {
+                    paymentData = {
+                        name: 'Harshit Jaiswal',
+                        number: '•••• •••• •••• 4242',
+                        expiry: '12/25',
+                        default: true
+                    };
+                } else if (paymentId === '2') {
+                    paymentData = {
+                        name: 'Harshit Jaiswal',
+                        number: '•••• •••• •••• 5555',
+                        expiry: '08/27',
+                        default: false
+                    };
+                }
+                
+                // Fill form with payment data
+                document.getElementById('paymentId').value = paymentId;
+                document.getElementById('cardholderName').value = paymentData.name;
+                document.getElementById('cardNumber').value = paymentData.number;
+                document.getElementById('expiryDate').value = paymentData.expiry;
+                document.getElementById('defaultPayment').checked = paymentData.default;
+                
+                // Update modal title
+                document.getElementById('paymentModalTitle').textContent = 'Edit Payment Method';
+                
+                // Show edit payment modal
+                modals.paymentMethods.hide();
+                modals.editPayment.show();
+            });
+        });
+        
+        // Save Payment Method
+        document.getElementById('savePaymentBtn').addEventListener('click', function() {
+            // Get form data
+            const paymentId = document.getElementById('paymentId').value;
+            const cardholderName = document.getElementById('cardholderName').value;
+            const cardNumber = document.getElementById('cardNumber').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            
+            // Validate required fields
+            if (!cardholderName || !cardNumber || !expiryDate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // In a real app, we would save this data to the server
+            // For demo purposes, just show success message
+            if (paymentId) {
+                alert(`Payment method updated successfully!`);
+            } else {
+                alert(`New payment method added successfully!`);
+            }
+            
+            // Close modal and show payment methods list
+            modals.editPayment.hide();
+            modals.paymentMethods.show();
+        });
+        
+        // Delete Payment
+        const deletePaymentButtons = document.querySelectorAll('.delete-payment');
+        deletePaymentButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const paymentId = this.dataset.paymentId;
+                
+                if (confirm('Are you sure you want to delete this payment method?')) {
+                    // In a real app, we would send a delete request to the server
+                    
+                    // For demo, just hide the element
+                    this.closest('.payment-item').style.display = 'none';
+                    alert('Payment method deleted successfully!');
+                }
+            });
+        });
+        
+        // Format card number with spaces
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = this.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            
+            this.value = formattedValue;
+        });
+        
+        // Format expiry date with slash
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+            
+            this.value = value;
+        });
+        
+        // Notifications
+        document.getElementById('notifications').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.notifications.show();
+        });
+        
+        document.getElementById('saveNotifications').addEventListener('click', function() {
+            // Get notification preferences
+            const parkingReminders = document.getElementById('parkingReminders').checked;
+            const specialOffers = document.getElementById('specialOffers').checked;
+            const bookingConfirmation = document.getElementById('bookingConfirmation').checked;
+            const paymentAlerts = document.getElementById('paymentAlerts').checked;
+            const appUpdates = document.getElementById('appUpdates').checked;
+            
+            // In a real app, we would save these preferences to the server
+            localStorage.setItem('parkingReminders', parkingReminders);
+            localStorage.setItem('specialOffers', specialOffers);
+            localStorage.setItem('bookingConfirmation', bookingConfirmation);
+            localStorage.setItem('paymentAlerts', paymentAlerts);
+            localStorage.setItem('appUpdates', appUpdates);
+            
+            alert('Notification settings saved successfully!');
+            modals.notifications.hide();
+        });
+        
+        // Help & Support
+        document.getElementById('helpSupport').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Reset to main help screen
+            document.querySelector('.support-sections').style.display = 'block';
+            document.querySelectorAll('.support-detail-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            modals.helpSupport.show();
+        });
+        
+        // Support Section Clicks
+        const supportItems = document.querySelectorAll('.support-item');
+        supportItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const section = this.dataset.section;
+                
+                // Handle each section
+                if (section === 'contact') {
+                    // Show contact form
+                    document.querySelector('.support-sections').style.display = 'none';
+                    document.getElementById('contactForm').style.display = 'block';
+                } else if (section === 'faq') {
+                    alert('FAQ section would open here');
+                } else if (section === 'report') {
+                    alert('Problem report form would open here');
+                } else if (section === 'terms') {
+                    alert('Terms of service would open here');
+                } else if (section === 'privacy') {
+                    alert('Privacy policy would open here');
+                }
+            });
+        });
+        
+        // Back to support
+        document.querySelector('.back-to-support').addEventListener('click', function() {
+            document.querySelector('.support-sections').style.display = 'block';
+            document.querySelectorAll('.support-detail-section').forEach(section => {
+                section.style.display = 'none';
+            });
+        });
+        
+        // Send support message
+        document.getElementById('sendSupportMessage').addEventListener('click', function() {
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+            
+            if (!subject || !message) {
+                alert('Please fill in both subject and message');
+                return;
+            }
+            
+            // In a real app, we would send this to the server
+            alert('Your message has been sent! We will respond shortly.');
+            
+            // Reset form and go back to main support screen
+            document.getElementById('supportSubject').value = '';
+            document.getElementById('supportMessage').value = '';
+            
+            document.querySelector('.support-sections').style.display = 'block';
+            document.getElementById('contactForm').style.display = 'none';
+        });
+        
+        // Settings
+        document.getElementById('settings').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.settings.show();
+        });
+        
+        // Save Settings
+        document.getElementById('saveSettings').addEventListener('click', function() {
+            // Get settings
+            const darkMode = document.getElementById('darkModeToggle').checked;
+            const language = document.getElementById('languageSelect').value;
+            const distanceUnit = document.getElementById('distanceUnit').value;
+            const timerAlerts = document.getElementById('timerAlerts').value;
+            const locationServices = document.getElementById('locationServices').checked;
+            
+            // Update dark mode using our new dark mode system
+            window.darkMode.setDarkMode(darkMode);
+            
+            // In a real app, we would save these settings to the server
+            localStorage.setItem('language', language);
+            localStorage.setItem('distanceUnit', distanceUnit);
+            localStorage.setItem('timerAlerts', timerAlerts);
+            localStorage.setItem('locationServices', locationServices);
+            
+            alert('Settings saved successfully!');
+            modals.settings.hide();
+        });
+        
+        // Clear Cache
+        document.getElementById('clearCache').addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear the app cache? This will not affect your account data.')) {
+                // In a real app, we would clear local storage, session storage, etc.
+                
+                // For demo, just show message
+                alert('App cache has been cleared successfully!');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            modals.logout.show();
+        });
+        
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            // In a real app, we would clear session/auth tokens
+            alert('You have been logged out successfully!');
+            
+            // Redirect to home page
+            window.location.href = '/';
+        });
+        
+        // Load saved settings
+        const loadSavedSettings = () => {
+            // Sync dark mode toggles with the current state
+            const darkModeEnabled = window.darkMode.isEnabled();
+            document.getElementById('darkModeToggle').checked = darkModeEnabled;
+            document.getElementById('darkMode').checked = darkModeEnabled;
+            
+            // Language
+            const language = localStorage.getItem('language');
+            if (language) {
+                document.getElementById('languageSelect').value = language;
+            }
+            
+            // Distance unit
+            const distanceUnit = localStorage.getItem('distanceUnit');
+            if (distanceUnit) {
+                document.getElementById('distanceUnit').value = distanceUnit;
+            }
+            
+            // Timer alerts
+            const timerAlerts = localStorage.getItem('timerAlerts');
+            if (timerAlerts) {
+                document.getElementById('timerAlerts').value = timerAlerts;
+            }
+            
+            // Location services
+            const locationServices = localStorage.getItem('locationServices') !== 'false';
+            document.getElementById('locationServices').checked = locationServices;
+            
+            // Notification preferences
+            document.getElementById('parkingReminders').checked = localStorage.getItem('parkingReminders') !== 'false';
+            document.getElementById('specialOffers').checked = localStorage.getItem('specialOffers') !== 'false';
+            document.getElementById('bookingConfirmation').checked = localStorage.getItem('bookingConfirmation') !== 'false';
+            document.getElementById('paymentAlerts').checked = localStorage.getItem('paymentAlerts') !== 'false';
+            document.getElementById('appUpdates').checked = localStorage.getItem('appUpdates') === 'true';
+        };
+        
+        // Load saved settings on page load
+        loadSavedSettings();
+    });
+</script>
+
+<style>
+    .user-profile-section {
+        padding: 20px 0;
+    }
+    
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+        border: 2px solid var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .avatar-edit {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 4px;
+        text-align: center;
+        font-size: 12px;
+    }
+    
+    .profile-info {
+        flex: 1;
+    }
+    
+    .edit-profile-btn {
+        background-color: transparent;
+        border: 1px solid var(--primary-color);
+        border-radius: 20px;
+        color: var(--primary-color);
+        padding: 6px 16px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-item {
+        text-align: center;
+        flex: 1;
+    }
+    
+    .stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-light);
+    }
+    
+    /* Menu Items */
+    .profile-menu {
+        margin-top: 20px;
+    }
+    
+    .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+        text-decoration: none;
+        color: var(--text-color);
+    }
+    
+    .menu-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: var(--primary-color);
+    }
+    
+    .menu-label {
+        flex: 1;
+        font-weight: 500;
+    }
+    
+    .menu-arrow {
+        color: var(--text-light);
+    }
+    
+    .logout-btn {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        padding: 15px 0;
+        color: #dc3545;
+    }
+    
+    .logout-btn .menu-icon {
+        color: #dc3545;
+    }
+    
+    /* Vehicle and Payment Lists */
+    .vehicle-item, .payment-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .vehicle-icon, .payment-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(130, 0, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        margin-right: 15px;
+    }
+    
+    .vehicle-info, .payment-info {
+        flex: 1;
+    }
+    
+    .vehicle-actions, .payment-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    /* Notification Settings */
+    .notification-setting {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .notification-info {
+        flex: 1;
+    }
+    
+    /* Support Items */
+    .support-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .support-item:hover {
+        background-color: rgba(130, 0, 255, 0.05);
+    }
+    
+    .support-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(130, 0, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        margin-right: 15px;
+    }
+    
+    .support-info {
+        flex: 1;
+    }
+    
+    .support-info p {
+        margin-bottom: 0;
+        font-size: 12px;
+        color: var(--text-light);
+    }
+    
+    /* Setting Items */
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .setting-info {
+        flex: 1;
+    }
+    
+    .setting-info p {
+        margin-bottom: 0;
+        font-size: 12px;
+    }
+</style>

@@ -1,0 +1,224 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the parking timer page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/booking/parkings" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Parking Timer</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+    </div>
+    
+    <!-- Timer Circle -->
+    <div class="timer-circle">
+        <svg width="250" height="250" viewBox="0 0 250 250">
+            <circle cx="125" cy="125" r="115" fill="none" stroke="#e6e6e6" stroke-width="12"/>
+            <circle cx="125" cy="125" r="115" fill="none" stroke="#8200ff" stroke-width="12" stroke-dasharray="723" stroke-dashoffset="180" transform="rotate(-90 125 125)" id="timer-circle"/>
+        </svg>
+        <div class="timer-display">
+            <div class="timer-value" id="timer-value">03 : 01 : 40</div>
+            <div class="timer-units">
+                <span class="timer-unit">Hours</span>
+                <span class="timer-unit">Minutes</span>
+                <span class="timer-unit">Seconds</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Booking Information -->
+    <div class="timer-info">
+        <div class="timer-info-item">
+            <div class="timer-info-label">Parking Area</div>
+            <div class="timer-info-value">Illinois Center</div>
+        </div>
+        <div class="timer-info-item">
+            <div class="timer-info-label">Vehicle Number</div>
+            <div class="timer-info-value">E653UA</div>
+        </div>
+        <div class="timer-info-item">
+            <div class="timer-info-label">Duration</div>
+            <div class="timer-info-value" id="duration-display">4 Hours</div>
+        </div>
+        <div class="timer-info-item">
+            <div class="timer-info-label">Parking Slot</div>
+            <div class="timer-info-value">G Floor - B 03</div>
+        </div>
+        <div class="timer-info-item">
+            <div class="timer-info-label">Date</div>
+            <div class="timer-info-value">Wed 08 Nov, 2023</div>
+        </div>
+        <div class="timer-info-item">
+            <div class="timer-info-label">Time</div>
+            <div class="timer-info-value">03:00PM To 07:00PM</div>
+        </div>
+    </div>
+    
+    <!-- Extend Time Button -->
+    <div class="d-grid mt-3">
+        <button class="btn-primary" id="extendTimeBtn">Extend Parking Time</button>
+    </div>
+    
+    <!-- Low Time Warning -->
+    <div class="time-warning" id="timeWarning" style="display: none;">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span>Less than 30 minutes remaining!</span>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Booking ID (would be provided by the server in real app)
+        const bookingId = '123456789'; 
+        
+        // Set up the timer
+        let hours = 3;
+        let minutes = 1;
+        let seconds = 40;
+        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        const initialTotalSeconds = 4 * 3600; // 4 hours
+        
+        // Elements
+        const timerValue = document.getElementById('timer-value');
+        const timerCircle = document.getElementById('timer-circle');
+        const timeWarning = document.getElementById('timeWarning');
+        const extendTimeBtn = document.getElementById('extendTimeBtn');
+        const durationDisplay = document.getElementById('duration-display');
+        
+        // Flag to track if time warning has been shown
+        let timeWarningShown = false;
+        
+        // Start the timer
+        const timerInterval = setInterval(updateTimer, 1000);
+        
+        function updateTimer() {
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                timerValue.textContent = "00 : 00 : 00";
+                alert("Your parking time has expired!");
+                return;
+            }
+            
+            totalSeconds--;
+            
+            // Calculate hours, minutes, seconds
+            const hoursLeft = Math.floor(totalSeconds / 3600);
+            const minutesLeft = Math.floor((totalSeconds % 3600) / 60);
+            const secondsLeft = totalSeconds % 60;
+            
+            // Format the time
+            const formattedTime = 
+                (hoursLeft < 10 ? "0" + hoursLeft : hoursLeft) + " : " + 
+                (minutesLeft < 10 ? "0" + minutesLeft : minutesLeft) + " : " + 
+                (secondsLeft < 10 ? "0" + secondsLeft : secondsLeft);
+            
+            // Update the timer display
+            timerValue.textContent = formattedTime;
+            
+            // Update the circle
+            const dashOffset = 723 - ((totalSeconds / initialTotalSeconds) * 723);
+            timerCircle.style.strokeDashoffset = dashOffset;
+            
+            // Show warning when less than 30 minutes remaining
+            if (totalSeconds <= 1800 && !timeWarningShown) {
+                timeWarning.style.display = 'flex';
+                timeWarningShown = true;
+            }
+        }
+        
+        // Handle extend time button click
+        extendTimeBtn.addEventListener('click', function() {
+            // Redirect to the extension page
+            window.location.href = `/booking/${bookingId}/extend`;
+        });
+        
+        // Check for any extensions that were previously made
+        checkForExtensions();
+        
+        function checkForExtensions() {
+            // In a real app, this would fetch from your API
+            // For demo, we'll simulate an extension
+            const hasExtension = localStorage.getItem('parkingExtended');
+            
+            if (hasExtension === 'true') {
+                // Add 2 hours (7200 seconds) to the timer
+                totalSeconds += 7200;
+                initialTotalSeconds += 7200;
+                durationDisplay.textContent = "6 Hours"; // 4 + 2 hours
+                
+                // Reset the warning
+                timeWarningShown = false;
+                timeWarning.style.display = 'none';
+                
+                // Show a success message
+                alert("Your parking has been extended by 2 hours!");
+                
+                // Clear the flag
+                localStorage.removeItem('parkingExtended');
+            }
+        }
+    });
+</script>
+
+<style>
+    .timer-circle {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        margin: 40px auto;
+    }
+    
+    .timer-circle svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: rotate(-90deg);
+    }
+    
+    .timer-display {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 100%;
+    }
+    
+    .timer-value {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .timer-units {
+        display: flex;
+        justify-content: space-between;
+        width: 85%;
+        margin: 0 auto;
+    }
+    
+    .timer-unit {
+        font-size: 12px;
+        color: var(--text-light);
+    }
+    
+    .time-warning {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+</style>

@@ -1,0 +1,482 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the booking form page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Book Parking</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-info-circle"></i>
+        </button>
+    </div>
+    
+    <!-- Parking Location Info -->
+    <div class="booking-summary">
+        <div class="location-name"><%= parking.name %></div>
+        <div class="location-address"><%= parking.address %></div>
+        <div class="price-info">₹<%= parking.pricePerHour %>/hour</div>
+    </div>
+    
+    <!-- Saved Vehicles Section (will be shown/hidden via JavaScript) -->
+    <div id="savedVehiclesSection" class="saved-vehicles-section mb-4" style="display: none;">
+        <div class="section-title">
+            <i class="fas fa-car-side me-2"></i> Your Saved Vehicles
+        </div>
+        <div class="saved-vehicles-list mt-2">
+            <select id="savedVehicleSelect" class="form-control">
+                <option value="">Select a saved vehicle...</option>
+                <!-- Options will be populated via JavaScript -->
+            </select>
+            <div class="saved-vehicle-actions mt-2">
+                <button type="button" id="deleteSavedVehicle" class="btn-outline btn-sm" style="display: none;">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Booking Form -->
+    <form id="bookingForm">
+        <input type="hidden" name="parkingId" value="<%= parking._id %>">
+        
+        <!-- Personal Details -->
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter Your Full Name" required>
+        </div>
+        
+        <div class="vehicle-details-section">
+            <div class="section-title mb-3">
+                <i class="fas fa-car me-2"></i> Vehicle Details
+            </div>
+            
+            <div class="form-group">
+                <label for="vehicleNumber">Vehicle Number</label>
+                <input type="text" id="vehicleNumber" name="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="vehicleType">Vehicle Type</label>
+                <select id="vehicleType" name="vehicleType" class="form-control" required>
+                    <% vehicleTypes.forEach(type => { %>
+                        <option value="<%= type %>"><%= type %></option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <!-- Save Vehicle Option -->
+            <div class="form-check save-vehicle-option mb-3">
+                <input type="checkbox" class="form-check-input" id="saveVehicle" name="saveVehicle">
+                <label class="form-check-label" for="saveVehicle">
+                    <i class="fas fa-save me-1"></i> Save vehicle for future bookings
+                </label>
+            </div>
+        </div>
+        
+        <!-- Time Selection -->
+        <div class="form-group">
+            <label>Parking Duration</label>
+            <div class="duration-options">
+                <button type="button" class="duration-option selected" data-hours="1">1h</button>
+                <button type="button" class="duration-option" data-hours="2">2h</button>
+                <button type="button" class="duration-option" data-hours="3">3h</button>
+                <button type="button" class="duration-option" data-hours="4">4h</button>
+            </div>
+            <input type="hidden" id="duration" name="duration" value="1">
+        </div>
+        
+        <!-- Amount Summary -->
+        <div class="amount-details">
+            <div class="amount-row">
+                <div class="amount-label">Price per Hour</div>
+                <div class="amount-value">₹<%= parking.pricePerHour %></div>
+            </div>
+            <div class="amount-row">
+                <div class="amount-label">Duration</div>
+                <div class="amount-value" id="durationText">1 Hour</div>
+            </div>
+            <div class="amount-row total-amount">
+                <div class="amount-label">Total Amount</div>
+                <div class="amount-value total-price">₹<%= parking.pricePerHour %></div>
+            </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn-primary">Proceed to Payment</button>
+        </div>
+    </form>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('bookingForm');
+        const durationOptions = document.querySelectorAll('.duration-option');
+        const durationInput = document.getElementById('duration');
+        const durationText = document.getElementById('durationText');
+        const totalPrice = document.querySelector('.total-price');
+        const pricePerHour = <%= parking.pricePerHour %>;
+        const saveVehicleCheckbox = document.getElementById('saveVehicle');
+        const vehicleNumberInput = document.getElementById('vehicleNumber');
+        const vehicleTypeSelect = document.getElementById('vehicleType');
+        const savedVehiclesSection = document.getElementById('savedVehiclesSection');
+        const savedVehicleSelect = document.getElementById('savedVehicleSelect');
+        const deleteSavedVehicleBtn = document.getElementById('deleteSavedVehicle');
+        
+        // Check for saved vehicles in localStorage
+        const checkForSavedVehicles = () => {
+            const savedVehicles = JSON.parse(localStorage.getItem('savedVehicles') || '[]');
+            if (savedVehicles.length > 0) {
+                // If there are saved vehicles, show the saved vehicles section
+                savedVehiclesSection.style.display = 'block';
+                
+                // Clear existing options except the first one
+                while (savedVehicleSelect.options.length > 1) {
+                    savedVehicleSelect.remove(1);
+                }
+                
+                // Populate the saved vehicles dropdown
+                savedVehicles.forEach(vehicle => {
+                    const option = document.createElement('option');
+                    option.value = vehicle.number;
+                    option.dataset.type = vehicle.type;
+                    option.textContent = `${vehicle.type} - ${vehicle.number}`;
+                    savedVehicleSelect.appendChild(option);
+                });
+            } else {
+                savedVehiclesSection.style.display = 'none';
+            }
+        };
+        
+        // Check for saved vehicles when the page loads
+        checkForSavedVehicles();
+        
+        // Handle saved vehicle selection
+        savedVehicleSelect.addEventListener('change', function() {
+            if (this.value) {
+                const selectedOption = this.options[this.selectedIndex];
+                vehicleNumberInput.value = this.value;
+                vehicleTypeSelect.value = selectedOption.dataset.type;
+                deleteSavedVehicleBtn.style.display = 'inline-block';
+                
+                // Visual feedback that the fields were auto-filled
+                vehicleNumberInput.classList.add('auto-filled');
+                vehicleTypeSelect.classList.add('auto-filled');
+                
+                setTimeout(() => {
+                    vehicleNumberInput.classList.remove('auto-filled');
+                    vehicleTypeSelect.classList.remove('auto-filled');
+                }, 1000);
+            } else {
+                vehicleNumberInput.value = '';
+                vehicleTypeSelect.selectedIndex = 0;
+                deleteSavedVehicleBtn.style.display = 'none';
+            }
+        });
+        
+        // Handle delete saved vehicle
+        deleteSavedVehicleBtn.addEventListener('click', function() {
+            const selectedOption = savedVehicleSelect.options[savedVehicleSelect.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const vehicleNumber = selectedOption.value;
+                
+                // Show confirmation dialog
+                if (confirm(`Delete saved vehicle ${selectedOption.text}?`)) {
+                    // Remove from localStorage
+                    let savedVehicles = JSON.parse(localStorage.getItem('savedVehicles') || '[]');
+                    savedVehicles = savedVehicles.filter(v => v.number !== vehicleNumber);
+                    localStorage.setItem('savedVehicles', JSON.stringify(savedVehicles));
+                    
+                    // Show deletion notification
+                    const notification = document.createElement('div');
+                    notification.className = 'save-notification delete-notification';
+                    notification.innerHTML = '<i class="fas fa-trash-alt"></i> Vehicle removed from saved list';
+                    document.body.appendChild(notification);
+                    
+                    // Remove notification after 2 seconds
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        setTimeout(() => notification.remove(), 300);
+                    }, 2000);
+                    
+                    // Clear vehicle details fields
+                    vehicleNumberInput.value = '';
+                    vehicleTypeSelect.selectedIndex = 0;
+                    
+                    // Refresh the saved vehicles list
+                    checkForSavedVehicles();
+                }
+            }
+        });
+        
+        // Handle duration selection
+        durationOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                durationOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Update hidden input value
+                const hours = parseInt(this.dataset.hours);
+                durationInput.value = hours;
+                
+                // Update duration text
+                durationText.textContent = hours + (hours === 1 ? ' Hour' : ' Hours');
+                
+                // Update total price
+                const total = hours * pricePerHour;
+                totalPrice.textContent = '₹' + total;
+            });
+        });
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if user wants to save vehicle
+            if (saveVehicleCheckbox.checked) {
+                const vehicleNumber = vehicleNumberInput.value;
+                const vehicleType = vehicleTypeSelect.value;
+                
+                // Save to localStorage if both values are provided
+                if (vehicleNumber && vehicleType) {
+                    // Get existing saved vehicles
+                    const savedVehicles = JSON.parse(localStorage.getItem('savedVehicles') || '[]');
+                    
+                    // Check if this vehicle is already saved
+                    const vehicleExists = savedVehicles.some(v => v.number === vehicleNumber);
+                    
+                    // If it doesn't exist, add it
+                    if (!vehicleExists) {
+                        savedVehicles.push({ number: vehicleNumber, type: vehicleType });
+                        localStorage.setItem('savedVehicles', JSON.stringify(savedVehicles));
+                        
+                        // Show a brief notification
+                        const notification = document.createElement('div');
+                        notification.className = 'save-notification';
+                        notification.innerHTML = '<i class="fas fa-check-circle"></i> Vehicle saved successfully!';
+                        document.body.appendChild(notification);
+                        
+                        // Remove notification after 2 seconds
+                        setTimeout(() => {
+                            notification.style.opacity = '0';
+                            setTimeout(() => notification.remove(), 300);
+                        }, 2000);
+                    }
+                }
+            }
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Processing...';
+            
+            // For demonstration purposes, we'll just redirect to a confirmation page
+            setTimeout(() => {
+                alert('Booking successful!');
+                window.location.href = '/booking/parkings';
+            }, 1000);
+        });
+    });
+</script>
+
+<style>
+    .booking-summary {
+        background-color: var(--primary-color);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .location-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .location-address {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 10px;
+    }
+    
+    .price-info {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .duration-options {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .duration-option {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: var(--card-bg);
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .duration-option.selected {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .amount-details {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .amount-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .amount-row:last-child {
+        border-bottom: none;
+    }
+    
+    .total-amount {
+        font-weight: 600;
+    }
+    
+    /* Style for save vehicle option */
+    .save-vehicle-option {
+        background-color: rgba(var(--primary-rgb), 0.05);
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 5px;
+        border-left: 3px solid var(--primary-color);
+    }
+    
+    .form-check-input {
+        cursor: pointer;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    /* Notification styles */
+    .save-notification {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    
+    .save-notification i {
+        font-size: 16px;
+    }
+    
+    /* Saved vehicles dropdown styles */
+    .saved-vehicles-dropdown {
+        background-color: rgba(var(--primary-rgb, 0, 123, 255), 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .saved-vehicles-dropdown label {
+        font-weight: 500;
+        color: var(--primary-color, #0d6efd);
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    /* New styles for saved vehicles section */
+    .saved-vehicles-section {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+    }
+    
+    .saved-vehicles-list {
+        position: relative;
+    }
+    
+    .vehicle-details-section {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .btn-sm {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+    
+    .saved-vehicle-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+</style>

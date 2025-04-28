@@ -1,0 +1,197 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the bookings page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/" class="back-button">
+            <i class="fas fa-map-marker-alt"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">My Parkings</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-bell"></i>
+        </button>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-container">
+        <button class="tab-button active" data-tab="ongoing">Ongoing</button>
+        <button class="tab-button" data-tab="completed">Completed</button>
+        <button class="tab-button" data-tab="canceled">Canceled</button>
+    </div>
+    
+    <!-- Booking List -->
+    <div class="booking-list">
+        <!-- Ongoing Tab Content -->
+        <div class="tab-content active" id="ongoing-content">
+            <!-- DLF CyberHub Booking -->
+            <div class="booking-card">
+                <div class="booking-info">
+                    <h6 class="booking-location">
+                        DLF CyberHub Parking
+                        <span class="booking-status status-active">Active</span>
+                    </h6>
+                    <p class="booking-address">DLF Cyber City, Gurugram</p>
+                    <div class="booking-actions">
+                        <a href="/booking/123456789/timer" class="btn-link">View Timer</a>
+                        <a href="/booking/ticket" class="btn-link">View Ticket</a>
+                    </div>
+                </div>
+                <div class="booking-amount">
+                    <div class="price">₹320</div>
+                    <div class="booking-hours">4 Hours</div>
+                </div>
+            </div>
+            
+            <!-- IGI Airport Booking -->
+            <div class="booking-card">
+                <div class="booking-info">
+                    <h6 class="booking-location">
+                        IGI Airport Parking
+                        <span class="booking-status status-active">New</span>
+                    </h6>
+                    <p class="booking-address">Terminal 3, IGI Airport, New Delhi</p>
+                    <div class="booking-actions">
+                        <button class="btn-link" id="cancel-booking-btn">Cancel Booking</button>
+                        <a href="/booking/ticket" class="btn-link">View Ticket</a>
+                    </div>
+                </div>
+                <div class="booking-amount">
+                    <div class="price">₹480</div>
+                    <div class="booking-hours">4 Hours</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completed Tab Content -->
+        <div class="tab-content" id="completed-content" style="display: none;">
+            <!-- DLF CyberHub Completed -->
+            <div class="booking-card">
+                <div class="booking-info">
+                    <h6 class="booking-location">
+                        DLF CyberHub Parking
+                        <span class="booking-status status-completed">Completed</span>
+                    </h6>
+                    <p class="booking-address">DLF Cyber City, Gurugram</p>
+                    <div class="booking-actions">
+                        <a href="/booking/ticket" class="btn-link">View Ticket</a>
+                    </div>
+                </div>
+                <div class="booking-amount">
+                    <div class="price">₹320</div>
+                    <div class="booking-hours">4 Hours</div>
+                </div>
+            </div>
+            
+            <!-- Ambience Mall Completed -->
+            <div class="booking-card">
+                <div class="booking-info">
+                    <h6 class="booking-location">
+                        Ambience Mall Parking
+                        <span class="booking-status status-completed">Completed</span>
+                    </h6>
+                    <p class="booking-address">NH-48, Ambience Island, Gurugram</p>
+                    <div class="booking-actions">
+                        <a href="/booking/ticket" class="btn-link">View Ticket</a>
+                    </div>
+                </div>
+                <div class="booking-amount">
+                    <div class="price">₹240</div>
+                    <div class="booking-hours">4 Hours</div>
+                </div>
+            </div>
+
+            <!-- Sector 29 Completed -->
+            <div class="booking-card">
+                <div class="booking-info">
+                    <h6 class="booking-location">
+                        Sector 29 Market Parking
+                        <span class="booking-status status-completed">Completed</span>
+                    </h6>
+                    <p class="booking-address">Leisure Valley Road, Sector 29, Gurugram</p>
+                    <div class="booking-actions">
+                        <a href="/booking/ticket" class="btn-link">View Ticket</a>
+                    </div>
+                </div>
+                <div class="booking-amount">
+                    <div class="price">₹150</div>
+                    <div class="booking-hours">3 Hours</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Canceled Tab Content -->
+        <div class="tab-content" id="canceled-content" style="display: none;">
+            <div class="text-center py-5">
+                <i class="fas fa-ban fs-1 text-secondary opacity-50 mb-3"></i>
+                <p class="text-secondary">No canceled bookings found.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <i class="fas fa-home nav-icon"></i>
+        <span>Home</span>
+    </a>
+    <a href="/saved" class="nav-item">
+        <i class="far fa-heart nav-icon"></i>
+        <span>Saved</span>
+    </a>
+    <a href="/scan" class="nav-item">
+        <button class="fab-button">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    </a>
+    <a href="/booking/parkings" class="nav-item active">
+        <i class="fas fa-ticket-alt nav-icon"></i>
+        <span>Bookings</span>
+    </a>
+    <a href="/profile" class="nav-item">
+        <i class="far fa-user nav-icon"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                
+                // Update tab buttons
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update tab contents
+                tabContents.forEach(content => {
+                    content.style.display = 'none';
+                    if (content.id === tabName + '-content') {
+                        content.style.display = 'block';
+                    }
+                });
+            });
+        });
+        
+        // Cancel booking button
+        document.getElementById('cancel-booking-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                // Would normally use AJAX to call a cancel endpoint
+                alert('Booking canceled successfully.');
+                
+                // Switch to canceled tab to show the result
+                document.querySelector('[data-tab="canceled"]').click();
+            }
+        });
+    });
+</script>

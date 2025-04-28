@@ -1,0 +1,440 @@
+<%- contentFor('head') %>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between mb-4">
+        <div class="location-badge">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Sector 29, Gurugram 122001</span>
+        </div>
+        <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+        </button>
+    </div>
+    
+    <h1 class="mb-4">Find Your<br>Parking Space</h1>
+    
+    <!-- Search Box -->
+    <div class="search-box mb-4">
+        <input type="text" placeholder="Search" id="location-input">
+        <button id="search-btn">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="map-container mb-4">
+        <div id="map"></div>
+    </div>
+    
+    <!-- Parking Options -->
+    <div class="parking-options">
+        <!-- Parking cards will be populated here -->
+    </div>
+</div>
+
+<!-- Parking Card Template -->
+<template id="parking-card-template">
+    <div class="parking-card mb-3">
+        <div class="position-relative">
+            <div class="image-container" style="height: 140px;"></div>
+            <span class="price-badge position-absolute" style="top: 10px; right: 10px;">₹50/hour</span>
+            <span class="distance-badge">1.4km - 5min away</span>
+        </div>
+        <div class="d-flex align-items-center mt-2 px-3">
+            <div class="location-pin">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+                <h6 class="mb-0 parking-name">Cyber Hub Parking</h6>
+                <p class="parking-address mb-0">DLF Cyber City, Gurugram</p>
+            </div>
+            <a href="#" class="ms-auto navigate-btn">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <!-- Amenities Section -->
+        <div class="amenities-container px-3 py-2">
+            <div class="amenities-list"></div>
+        </div>
+        <!-- Available Slots -->
+        <div class="available-slots-container px-3 pb-2">
+            <span class="available-slots badge bg-success"></span>
+        </div>
+    </div>
+</template>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item active">
+        <i class="fas fa-home nav-icon"></i>
+        <span class="nav-text">Home</span>
+    </a>
+    <a href="/saved" class="nav-item">
+        <i class="far fa-heart nav-icon"></i>
+        <span class="nav-text">Saved</span>
+    </a>
+    <a href="/scan" class="nav-item">
+        <button class="fab-button">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    </a>
+    <a href="/booking/parkings" class="nav-item">
+        <i class="fas fa-ticket-alt nav-icon"></i>
+        <span class="nav-text">Bookings</span>
+    </a>
+    <a href="/profile" class="nav-item">
+        <i class="far fa-user nav-icon"></i>
+        <span class="nav-text">Profile</span>
+    </a>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize map with dark theme
+        var map = L.map('map', {
+            zoomControl: false
+        }).setView([28.4595, 77.0266], 15); // Gurugram coordinates
+        
+        // Custom dark theme for map
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(map);
+
+        // Custom marker icons
+        const createMarkerIcon = (isSelected = false) => {
+            return L.divIcon({
+                className: isSelected ? 'custom-marker selected' : 'custom-marker',
+                html: '<i class="fas fa-parking"></i>',
+                iconSize: [isSelected ? 36 : 30, isSelected ? 36 : 30]
+            });
+        };
+
+        // Background colors for location cards
+        const bgColors = [
+            "#2d3748", // Dark blue gray for CyberHub
+            "#3182ce", // Blue for Ambience Mall
+            "#4a5568"  // Gray for MG Road Metro
+        ];
+
+        // Icon mapping for amenities
+        const amenityIcons = {
+            'CCTV': 'fa-video',
+            'EV Charging': 'fa-bolt',
+            'Valet': 'fa-user-tie',
+            'Covered': 'fa-umbrella',
+            'Security': 'fa-shield-alt',
+            '24/7': 'fa-clock',
+            'Wheelchair': 'fa-wheelchair',
+            'Car Wash': 'fa-car',
+            'Restroom': 'fa-restroom'
+        };
+
+        // Sample parking locations (Gurugram)
+        const parkingLocations = [
+            {
+                name: "Cyber Hub Parking",
+                address: "DLF Cyber City, Gurugram",
+                coords: [28.4947, 77.0893],
+                price: 50,
+                distance: "1.4km",
+                duration: "5min",
+                selected: true,
+                bgColor: bgColors[0],
+                amenities: ['CCTV', 'EV Charging', 'Valet'],
+                availableSlots: 120,
+                totalSlots: 200
+            },
+            {
+                name: "Ambience Mall Parking",
+                address: "NH 48, DLF Phase 3, Gurugram",
+                coords: [28.5042, 77.0968],
+                price: 30,
+                distance: "2.1km",
+                duration: "7min",
+                bgColor: bgColors[1],
+                amenities: ['CCTV', 'Covered', 'Security'],
+                availableSlots: 200,
+                totalSlots: 350
+            },
+            {
+                name: "MG Road Metro Parking",
+                address: "MG Road, Gurugram",
+                coords: [28.4800, 77.0892],
+                price: 40,
+                distance: "3.2km",
+                duration: "10min",
+                bgColor: bgColors[2],
+                amenities: ['CCTV', 'Security', '24/7'],
+                availableSlots: 280,
+                totalSlots: 500
+            }
+        ];
+
+        // Add markers to map
+        parkingLocations.forEach(location => {
+            const marker = L.marker(location.coords, {
+                icon: createMarkerIcon(location.selected)
+            }).addTo(map);
+            
+            marker.bindPopup(
+                `<strong>${location.name}</strong><br>
+                ${location.address}<br>
+                <b>₹${location.price}/hr</b> · ${location.distance} away`
+            );
+            
+            if(location.selected) {
+                marker.openPopup();
+            }
+        });
+
+        // Distance indicator line
+        if(parkingLocations.length > 0) {
+            const userLocation = [28.4595, 77.0266]; // Current user location in Gurugram
+            const selectedLocation = parkingLocations.find(loc => loc.selected)?.coords;
+            
+            if(selectedLocation) {
+                L.polyline([userLocation, selectedLocation], {
+                    color: 'rgba(137, 87, 254, 0.7)',
+                    dashArray: '5, 10',
+                    weight: 3
+                }).addTo(map);
+                
+                // User location marker
+                L.marker(userLocation, {
+                    icon: L.divIcon({
+                        className: 'user-location-marker',
+                        html: '<div class="inner-dot"></div>',
+                        iconSize: [16, 16]
+                    })
+                }).addTo(map);
+            }
+        }
+
+        // Populate parking cards
+        const parkingOptions = document.querySelector('.parking-options');
+        const template = document.getElementById('parking-card-template');
+        
+        parkingLocations.forEach((location, index) => {
+            const clone = document.importNode(template.content, true);
+            
+            // Update text content
+            clone.querySelector('.parking-name').textContent = location.name;
+            clone.querySelector('.parking-address').textContent = location.address;
+            clone.querySelector('.price-badge').textContent = `₹${location.price}/hour`;
+            clone.querySelector('.distance-badge').textContent = `${location.distance} - ${location.duration} away`;
+            
+            // Create color block instead of image
+            const imgContainer = clone.querySelector('.image-container');
+            imgContainer.style.backgroundColor = location.bgColor;
+            imgContainer.style.color = "white";
+            imgContainer.style.display = "flex";
+            imgContainer.style.alignItems = "center";
+            imgContainer.style.justifyContent = "center";
+            imgContainer.style.fontWeight = "bold";
+            imgContainer.innerHTML = `<div>${location.name}</div>`;
+            
+            // Add navigation link
+            clone.querySelector('.navigate-btn').href = `/parking/${encodeURIComponent(location.name)}`;
+            clone.querySelector('.parking-card').addEventListener('click', function() {
+                window.location.href = `/booking/form/${encodeURIComponent(location.name.toLowerCase().replace(/\s+/g, '-'))}`;
+            });
+            
+            // Add amenities with animation
+            const amenitiesContainer = clone.querySelector('.amenities-list');
+            if (location.amenities && location.amenities.length > 0) {
+                location.amenities.forEach((amenity, i) => {
+                    const amenityBadge = document.createElement('span');
+                    amenityBadge.className = 'amenity-badge';
+                    amenityBadge.style.animationDelay = `${i * 0.1}s`;
+                    
+                    const icon = amenityIcons[amenity] || 'fa-check-circle';
+                    amenityBadge.innerHTML = `<i class="fas ${icon} me-1"></i>${amenity}`;
+                    
+                    // Add slide-in animation class
+                    amenityBadge.classList.add('slide-in-right');
+                    
+                    amenitiesContainer.appendChild(amenityBadge);
+                });
+            }
+            
+            // Add available slots with animation
+            const availableSlotsElement = clone.querySelector('.available-slots');
+            if (location.availableSlots !== undefined && location.totalSlots !== undefined) {
+                availableSlotsElement.textContent = `${location.availableSlots} spots available`;
+                availableSlotsElement.classList.add('pulse-animation');
+            }
+            
+            // Add the card to the DOM with a staggered delay
+            setTimeout(() => {
+                parkingOptions.appendChild(clone);
+            }, index * 100);
+        });
+
+        // Get user's current location
+        document.getElementById('search-btn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    
+                    map.setView([lat, lng], 15);
+                    
+                    // Add marker for user's location
+                    L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'user-location-marker',
+                            html: '<div class="inner-dot"></div>',
+                            iconSize: [16, 16]
+                        })
+                    }).addTo(map);
+                    
+                    // Fetch nearby parking locations
+                    // fetchNearbyParkingLocations(lat, lng);
+                });
+            }
+        });
+
+        // Animate amenity badges on hover
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('amenity-badge')) {
+                e.target.classList.add('pulse-animation');
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.classList.contains('amenity-badge')) {
+                e.target.classList.remove('pulse-animation');
+            }
+        });
+    });
+</script>
+
+<style>
+    .notification-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobile-container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+    
+    .map-container {
+        height: 300px;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    #map {
+        height: 100%;
+    }
+    
+    /* Updated card styles for better UI */
+    .parking-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s ease;
+    }
+    
+    .parking-card:active {
+        transform: scale(0.98);
+    }
+    
+    .distance-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .user-location-marker {
+        background-color: rgba(137, 87, 254, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .inner-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #8957fe;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px white;
+    }
+    
+    .navigate-btn {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* Amenities styling */
+    .amenities-container {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .amenities-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .amenity-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        background-color: rgba(0, 123, 255, 0.15);
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    .amenity-badge i {
+        margin-right: 4px;
+    }
+    
+    .amenity-badge:hover {
+        transform: scale(1.05);
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .available-slots {
+        font-size: 12px;
+        font-weight: 500;
+    }
+</style>

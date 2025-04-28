@@ -1,0 +1,130 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the navigation screen -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<%- contentFor('body') %>
+<div class="navigation-screen">
+    <!-- Header Section -->
+    <div class="nav-header">
+        <div class="nav-title">Navigation</div>
+        <button class="close-button" onclick="window.location.href='/booking/ticket'">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Map Area -->
+    <div class="nav-map" id="navigationMap"></div>
+    
+    <!-- Distance Badge -->
+    <div class="distance-badge mb-3">
+        <i class="fas fa-location-arrow me-2"></i>
+        <span>100m</span>
+    </div>
+    
+    <!-- Location Info -->
+    <div class="location-info">
+        <div class="d-flex">
+            <img src="/images/parking-illinois.jpg" class="location-thumbnail me-3" alt="Illinois Center">
+            <div class="flex-grow-1">
+                <h6 class="text-white mb-0">Illinois Center</h6>
+                <p class="text-white-50 small mb-2">111 E Wacker Dr, Chicago</p>
+                
+                <div class="d-flex justify-content-between mt-1">
+                    <div>
+                        <div class="text-white-50 small">Parking Slot</div>
+                        <div class="text-white small">G Floor - B 03</div>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small">Distance</div>
+                        <div class="text-white small">1.4km</div>
+                    </div>
+                    <div class="distance-badge ms-2">
+                        <i class="fas fa-location-arrow me-1"></i>
+                        <span>100m</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stop Navigation Button -->
+    <div class="d-grid">
+        <button class="btn-primary" onclick="window.location.href='/booking/ticket'">
+            Stop Navigation
+        </button>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the map
+        const map = L.map('navigationMap').setView([41.8878, -87.6270], 15);
+        
+        // Use a dark map style
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add a marker for the parking location
+        const parkingMarker = L.marker([41.8878, -87.6270]).addTo(map);
+        
+        // Add a marker for the current position (simulated)
+        const currentPosition = [41.8858, -87.6278];
+        const userMarker = L.marker(currentPosition).addTo(map);
+        
+        // Draw a path between the two points
+        const path = L.polyline([currentPosition, [41.8878, -87.6270]], {
+            color: '#ffde59',
+            weight: 5,
+            opacity: 0.8
+        }).addTo(map);
+        
+        // Simulating movement (in a real app, this would use geolocation)
+        let i = 0;
+        const simulatePath = [
+            [41.8858, -87.6278],
+            [41.8860, -87.6275],
+            [41.8865, -87.6272],
+            [41.8870, -87.6270],
+            [41.8875, -87.6269],
+            [41.8878, -87.6270]
+        ];
+        
+        function simulateMovement() {
+            if (i >= simulatePath.length) return;
+            
+            userMarker.setLatLng(simulatePath[i]);
+            
+            // Update the path
+            const newPath = simulatePath.slice(i).concat([[41.8878, -87.6270]]);
+            path.setLatLngs(newPath);
+            
+            // Update the distance text (would be calculated from actual coordinates)
+            const distance = (simulatePath.length - i - 1) * 30;
+            document.querySelectorAll('.distance-badge span').forEach(el => {
+                el.textContent = distance + 'm';
+            });
+            
+            i++;
+            
+            // Continue simulation
+            if (i < simulatePath.length) {
+                setTimeout(simulateMovement, 3000);
+            }
+        }
+        
+        // Start the simulation after a short delay
+        setTimeout(simulateMovement, 2000);
+    });
+</script>
+
+<style>
+    .location-thumbnail {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+</style>

@@ -1,0 +1,360 @@
+// filepath: c:\xampp\htdocs\parking-management-app\views\extend-booking.ejs
+<%- contentFor('head') %>
+<!-- Additional styles for the extend booking page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/booking/timer" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Extend Parking Time</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-info-circle"></i>
+        </button>
+    </div>
+    
+    <!-- Current Booking Info -->
+    <div class="current-booking-info">
+        <div class="parking-name">Illinois Center</div>
+        <div class="booking-details-row">
+            <div class="booking-detail">
+                <div class="detail-label">Current End Time</div>
+                <div class="detail-value" id="currentEndTime">07:00 PM</div>
+            </div>
+            <div class="booking-detail">
+                <div class="detail-label">Parking Slot</div>
+                <div class="detail-value">G Floor - B 03</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Extension Options -->
+    <div class="extension-section">
+        <h6>Select Additional Time</h6>
+        
+        <div class="time-options">
+            <button class="time-option" data-hours="1">
+                <div class="time-value">1h</div>
+                <div class="time-price" data-base-price="<%= pricePerHour %>">$<%= pricePerHour %></div>
+            </button>
+            <button class="time-option" data-hours="2">
+                <div class="time-value">2h</div>
+                <div class="time-price" data-base-price="<%= pricePerHour %>">$<%= pricePerHour * 2 %></div>
+            </button>
+            <button class="time-option" data-hours="3">
+                <div class="time-value">3h</div>
+                <div class="time-price" data-base-price="<%= pricePerHour %>">$<%= pricePerHour * 3 %></div>
+            </button>
+        </div>
+        
+        <div class="custom-time">
+            <h6>Custom Hours</h6>
+            <div class="custom-time-input">
+                <button class="decrement-btn" id="decrementHours">-</button>
+                <input type="number" id="customHours" min="1" max="24" value="1">
+                <button class="increment-btn" id="incrementHours">+</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Extension Summary -->
+    <div class="extension-summary">
+        <div class="summary-row">
+            <div class="summary-label">Current End Time</div>
+            <div class="summary-value" id="summaryCurrentEnd">07:00 PM</div>
+        </div>
+        <div class="summary-row">
+            <div class="summary-label">New End Time</div>
+            <div class="summary-value" id="summaryNewEnd">08:00 PM</div>
+        </div>
+        <div class="summary-row">
+            <div class="summary-label">Additional Hours</div>
+            <div class="summary-value" id="summaryHours">1 hour</div>
+        </div>
+        <div class="summary-row total-row">
+            <div class="summary-label">Additional Cost</div>
+            <div class="summary-value" id="summaryCost">$<%= pricePerHour %></div>
+        </div>
+    </div>
+    
+    <!-- Payment Button -->
+    <div class="d-grid gap-2 mt-4">
+        <button class="btn-primary" id="confirmExtensionBtn">Confirm & Pay</button>
+        <button class="btn-outline" id="cancelExtensionBtn">Cancel</button>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookingId = '<%= booking._id %>'; // Get the booking ID from the server
+        const basePrice = <%= pricePerHour %>; // Base price per hour
+        let selectedHours = 1; // Default selection
+        
+        // Select all time option buttons
+        const timeOptions = document.querySelectorAll('.time-option');
+        
+        // Custom hours elements
+        const customHoursInput = document.getElementById('customHours');
+        const decrementBtn = document.getElementById('decrementHours');
+        const incrementBtn = document.getElementById('incrementHours');
+        
+        // Summary elements
+        const summaryHours = document.getElementById('summaryHours');
+        const summaryCost = document.getElementById('summaryCost');
+        const summaryNewEnd = document.getElementById('summaryNewEnd');
+        
+        // Action buttons
+        const confirmBtn = document.getElementById('confirmExtensionBtn');
+        const cancelBtn = document.getElementById('cancelExtensionBtn');
+        
+        // Current end time (you would get this from the server in a real app)
+        const currentEndTime = new Date();
+        currentEndTime.setHours(19, 0); // 7:00 PM for demonstration
+        
+        // Initialize with first option selected
+        timeOptions[0].classList.add('selected');
+        
+        // Handle time option selection
+        timeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selection from all options
+                timeOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selection to clicked option
+                this.classList.add('selected');
+                
+                // Update hours and custom input
+                selectedHours = parseInt(this.dataset.hours);
+                customHoursInput.value = selectedHours;
+                
+                // Update summary
+                updateSummary();
+            });
+        });
+        
+        // Handle custom hours input
+        customHoursInput.addEventListener('change', function() {
+            // Ensure value is between min and max
+            let hours = parseInt(this.value);
+            if (isNaN(hours) || hours < 1) hours = 1;
+            if (hours > 24) hours = 24;
+            
+            this.value = hours;
+            selectedHours = hours;
+            
+            // Remove selection from preset options
+            timeOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Update summary
+            updateSummary();
+        });
+        
+        // Handle increment/decrement buttons
+        decrementBtn.addEventListener('click', function() {
+            let currentValue = parseInt(customHoursInput.value);
+            if (currentValue > 1) {
+                customHoursInput.value = currentValue - 1;
+                customHoursInput.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        incrementBtn.addEventListener('click', function() {
+            let currentValue = parseInt(customHoursInput.value);
+            if (currentValue < 24) {
+                customHoursInput.value = currentValue + 1;
+                customHoursInput.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        // Function to update the summary section
+        function updateSummary() {
+            // Update hours text
+            summaryHours.textContent = selectedHours + (selectedHours === 1 ? ' hour' : ' hours');
+            
+            // Update cost
+            const additionalCost = selectedHours * basePrice;
+            summaryCost.textContent = '$' + additionalCost.toFixed(2);
+            
+            // Update new end time
+            const newEndTime = new Date(currentEndTime.getTime() + (selectedHours * 60 * 60 * 1000));
+            summaryNewEnd.textContent = formatTime(newEndTime);
+        }
+        
+        // Helper function to format time
+        function formatTime(date) {
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Convert 0 to 12
+            
+            return hours + ':' + (minutes < 10 ? '0' + minutes : minutes) + ' ' + ampm;
+        }
+        
+        // Handle confirm button click
+        confirmBtn.addEventListener('click', function() {
+            // In a real app, you would make an AJAX call to your extend booking endpoint
+            fetch(`/booking/${bookingId}/extend`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    additionalHours: selectedHours
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then(data => {
+                alert('Parking time extended successfully!');
+                window.location.href = '/booking/timer';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to extend parking time. Please try again.');
+            });
+        });
+        
+        // Handle cancel button click
+        cancelBtn.addEventListener('click', function() {
+            window.location.href = '/booking/timer';
+        });
+        
+        // Initialize summary
+        updateSummary();
+    });
+</script>
+
+<style>
+    .current-booking-info {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .parking-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .booking-details-row {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .booking-detail {
+        flex: 1;
+    }
+    
+    .detail-label {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+    
+    .detail-value {
+        font-weight: 500;
+    }
+    
+    .extension-section {
+        margin: 30px 0;
+    }
+    
+    .time-options {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    .time-option {
+        flex: 1;
+        background-color: var(--card-bg);
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px 10px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    
+    .time-option.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(130, 0, 255, 0.05);
+    }
+    
+    .time-value {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .time-price {
+        font-size: 14px;
+        color: var(--text-light);
+    }
+    
+    .custom-time {
+        margin-top: 25px;
+    }
+    
+    .custom-time-input {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .decrement-btn, .increment-btn {
+        width: 40px;
+        height: 40px;
+        background-color: var(--card-bg);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #customHours {
+        flex: 1;
+        text-align: center;
+        margin: 0 10px;
+        height: 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    
+    .extension-summary {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+    
+    .total-row {
+        font-weight: 600;
+        margin-top: 5px;
+    }
+</style>

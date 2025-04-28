@@ -1,0 +1,286 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the saved locations page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="location-badge">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Sector 29, Gurugram 122001</span>
+        </div>
+        <button class="notification-btn ms-auto">
+            <i class="fas fa-bell"></i>
+        </button>
+    </div>
+    
+    <h1 class="mb-4">Saved Locations</h1>
+    
+    <!-- Search Box -->
+    <div class="search-box mb-4">
+        <input type="text" placeholder="Search your saved locations" id="saved-location-search">
+        <button id="search-btn">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    
+    <!-- Saved Locations List -->
+    <div class="saved-locations">
+        <!-- Location 1 -->
+        <div class="parking-card mb-3" data-id="680b0d7e393a23c4f3811043">
+            <div class="position-relative">
+                <div class="parking-image" style="background-color: #2d3748; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    <div>DLF CyberHub Parking</div>
+                </div>
+                <span class="price-badge position-absolute" style="top: 10px; right: 10px;">₹80/hour</span>
+                <div class="favorite-badge active">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mt-2">
+                <div class="location-pin">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 parking-name">DLF CyberHub Parking</h6>
+                    <p class="parking-address mb-0">DLF Cyber City, Gurugram</p>
+                </div>
+                <a href="/booking/form/680b0d7e393a23c4f3811043" class="ms-auto book-btn">
+                    Book
+                </a>
+            </div>
+        </div>
+        
+        <!-- Location 2 -->
+        <div class="parking-card mb-3" data-id="680b0d7e393a23c4f3811044">
+            <div class="position-relative">
+                <div class="parking-image" style="background-color: #3182ce; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    <div>Ambience Mall Parking</div>
+                </div>
+                <span class="price-badge position-absolute" style="top: 10px; right: 10px;">₹60/hour</span>
+                <div class="favorite-badge active">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mt-2">
+                <div class="location-pin">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 parking-name">Ambience Mall Parking</h6>
+                    <p class="parking-address mb-0">NH-48, Ambience Island, Gurugram</p>
+                </div>
+                <a href="/booking/form/680b0d7e393a23c4f3811044" class="ms-auto book-btn">
+                    Book
+                </a>
+            </div>
+        </div>
+        
+        <!-- Location 3 -->
+        <div class="parking-card mb-3" data-id="680b0d7e393a23c4f3811045">
+            <div class="position-relative">
+                <div class="parking-image" style="background-color: #4a5568; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    <div>IGI Airport Parking</div>
+                </div>
+                <span class="price-badge position-absolute" style="top: 10px; right: 10px;">₹120/hour</span>
+                <div class="favorite-badge active">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mt-2">
+                <div class="location-pin">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 parking-name">IGI Airport Parking</h6>
+                    <p class="parking-address mb-0">Terminal 3, IGI Airport, New Delhi</p>
+                </div>
+                <a href="/booking/form/680b0d7e393a23c4f3811045" class="ms-auto book-btn">
+                    Book
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- When no saved locations -->
+    <div class="no-locations text-center" style="display: none;">
+        <i class="far fa-heart fs-1 text-secondary opacity-50 mb-3"></i>
+        <p class="text-secondary">No saved locations found. Add some from the home screen!</p>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="/" class="nav-item">
+        <i class="fas fa-home nav-icon"></i>
+        <span>Home</span>
+    </a>
+    <a href="/saved" class="nav-item active">
+        <i class="fas fa-heart nav-icon"></i>
+        <span>Saved</span>
+    </a>
+    <a href="/scan" class="nav-item">
+        <button class="fab-button">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    </a>
+    <a href="/booking/parkings" class="nav-item">
+        <i class="fas fa-ticket-alt nav-icon"></i>
+        <span>Bookings</span>
+    </a>
+    <a href="/profile" class="nav-item">
+        <i class="far fa-user nav-icon"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('saved-location-search');
+        const parkingCards = document.querySelectorAll('.parking-card');
+        const noLocations = document.querySelector('.no-locations');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            let hasResults = false;
+            
+            parkingCards.forEach(card => {
+                const locationName = card.querySelector('.parking-name').textContent.toLowerCase();
+                const locationAddress = card.querySelector('.parking-address').textContent.toLowerCase();
+                
+                if (locationName.includes(searchTerm) || locationAddress.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            noLocations.style.display = hasResults ? 'none' : 'block';
+        });
+        
+        // Remove from favorites functionality
+        const favoriteButtons = document.querySelectorAll('.favorite-badge');
+        favoriteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card click
+                const card = this.closest('.parking-card');
+                
+                // Add fade-out animation
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(20px)';
+                card.style.transition = 'all 0.3s ease';
+                
+                // Remove card after animation
+                setTimeout(() => {
+                    card.remove();
+                    
+                    // Check if there are any cards left
+                    if (document.querySelectorAll('.parking-card:not([style*="display: none"])').length === 0) {
+                        noLocations.style.display = 'block';
+                    }
+                }, 300);
+            });
+        });
+        
+        // Book button functionality
+        const bookButtons = document.querySelectorAll('.book-btn');
+        bookButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card click
+                e.preventDefault(); // Prevent default navigation
+                
+                const href = this.getAttribute('href');
+                
+                // Add visual feedback
+                this.innerHTML = 'Booking...';
+                this.style.opacity = '0.7';
+                
+                // Navigate to booking form after brief delay
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+        
+        // Make entire card clickable to navigate to booking form
+        const parkingCardElements = document.querySelectorAll('.parking-card');
+        parkingCardElements.forEach(card => {
+            const bookBtn = card.querySelector('.book-btn');
+            if (bookBtn) {
+                card.addEventListener('click', function() {
+                    const href = bookBtn.getAttribute('href');
+                    window.location.href = href;
+                });
+                card.style.cursor = 'pointer';
+            }
+        });
+    });
+</script>
+
+<style>
+    .favorite-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .favorite-badge.active {
+        color: #ff426c;
+    }
+    
+    .favorite-badge:hover {
+        transform: scale(1.1);
+    }
+    
+    .book-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 20px;
+        padding: 6px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+    }
+    
+    .no-locations {
+        padding: 40px 0;
+    }
+    
+    .parking-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .parking-image {
+        width: 100%;
+        height: 140px; /* Reduced height for better UI experience */
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .price-badge {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+</style>

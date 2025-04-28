@@ -1,0 +1,281 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the payment details page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="/booking/form" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0">Payment Details</h5>
+        </div>
+        <button class="info-button">
+            <i class="fas fa-info-circle"></i>
+        </button>
+    </div>
+    
+    <!-- Booking Summary -->
+    <div class="booking-summary">
+        <div class="booking-location">
+            <div class="location-name">Illinois Center</div>
+            <div class="location-address">111 E Wacker Dr, Chicago</div>
+            <div class="booking-time">03:00PM To 07:00PM</div>
+        </div>
+        
+        <!-- Booking Details -->
+        <div class="payment-details">
+            <div class="payment-row">
+                <div class="payment-label">$/hour</div>
+                <div class="payment-value">$5</div>
+            </div>
+            <div class="payment-row">
+                <div class="payment-label">Hours</div>
+                <div class="payment-value">4 Hours</div>
+            </div>
+            <div class="payment-row">
+                <div class="payment-label">Place Booked</div>
+                <div class="payment-value">G Floor - B 03</div>
+            </div>
+            <div class="payment-row total-payment">
+                <div class="payment-label">Total Amount</div>
+                <div class="payment-value total-price">$20</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Methods Section -->
+    <div class="payment-methods-section">
+        <h6>Payment Methods</h6>
+        <div class="payment-methods-row">
+            <button class="payment-method-btn">
+                <img src="/images/paypal.png" alt="PayPal">
+            </button>
+            <button class="payment-method-btn">
+                <img src="/images/apple-pay.png" alt="Apple Pay">
+            </button>
+            <button class="payment-method-btn">
+                <img src="/images/google-pay.png" alt="Google Pay">
+            </button>
+        </div>
+        
+        <div class="add-card-section">
+            <div class="section-header">
+                <h6>Payment Methods</h6>
+                <a href="#" class="add-card-link">+ Add Card</a>
+            </div>
+            
+            <!-- Saved Cards -->
+            <div class="saved-cards">
+                <div class="saved-card selected">
+                    <div class="card-radio">
+                        <input type="radio" name="paymentCard" id="card1" checked>
+                        <label for="card1"></label>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-number">6473 7538 1823 0425</div>
+                        <div class="card-name">Cameron Williamson</div>
+                    </div>
+                    <div class="card-logo">
+                        <img src="/images/visa.png" alt="Visa">
+                    </div>
+                </div>
+                
+                <div class="saved-card">
+                    <div class="card-radio">
+                        <input type="radio" name="paymentCard" id="card2">
+                        <label for="card2"></label>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-number">7934 2940 0298 1948</div>
+                        <div class="card-name">Cameron Williamson</div>
+                    </div>
+                    <div class="card-logo">
+                        <img src="/images/visa.png" alt="Visa">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pay Now Button -->
+    <div class="d-grid mt-4">
+        <button id="payNowBtn" class="btn-primary">Pay Now</button>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle card selection
+        const cards = document.querySelectorAll('.saved-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Deselect all cards
+                cards.forEach(c => {
+                    c.classList.remove('selected');
+                    c.querySelector('input[type="radio"]').checked = false;
+                });
+                
+                // Select the clicked card
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+        
+        // Handle payment button click
+        document.getElementById('payNowBtn').addEventListener('click', function() {
+            // In a real app, process the payment here
+            window.location.href = '/booking/ticket';
+        });
+    });
+</script>
+
+<style>
+    .booking-summary {
+        background-color: #ffe100;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .location-name {
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .location-address, .booking-time {
+        font-size: 14px;
+        margin-top: 2px;
+    }
+    
+    .booking-time {
+        opacity: 0.8;
+    }
+    
+    .payment-details {
+        margin-top: 15px;
+        background-color: white;
+        border-radius: 10px;
+        padding: 15px;
+    }
+    
+    .payment-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .payment-row:last-child {
+        border-bottom: none;
+    }
+    
+    .total-payment {
+        font-weight: 600;
+    }
+    
+    .payment-methods-section {
+        margin: 25px 0;
+    }
+    
+    .payment-methods-row {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    .payment-method-btn {
+        flex: 1;
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .payment-method-btn img {
+        height: 24px;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .add-card-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .saved-card {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .saved-card.selected {
+        border-color: var(--primary);
+        background-color: rgba(130, 0, 255, 0.05);
+    }
+    
+    .card-radio {
+        margin-right: 15px;
+    }
+    
+    .card-radio input[type="radio"] {
+        display: none;
+    }
+    
+    .card-radio label {
+        display: block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .saved-card.selected .card-radio label {
+        border-color: var(--primary);
+    }
+    
+    .saved-card.selected .card-radio label:after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .card-details {
+        flex: 1;
+    }
+    
+    .card-number {
+        font-weight: 500;
+    }
+    
+    .card-name {
+        font-size: 12px;
+        color: var(--text-light);
+    }
+</style>

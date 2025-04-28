@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | ParkKaro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/dark-mode.js" defer></script>
+    <%- defineContent('head') %>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: var(--primary-color); color: white;">
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: white;">
+                <i class="fas fa-parking me-2"></i>ParkKaro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" style="color: rgba(255,255,255,0.85);"><i class="fas fa-search me-1"></i> Find Parking</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/booking/my-bookings" style="color: rgba(255,255,255,0.85);"><i class="fas fa-ticket me-1"></i> My Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/profile" style="color: rgba(255,255,255,0.85);"><i class="fas fa-user me-1"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="theme-switch-wrapper ms-2">
+                            <label class="theme-switch" for="navDarkModeToggle">
+                                <input type="checkbox" id="navDarkModeToggle" class="dark-mode-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="theme-icon" style="color: white;"><i class="fas fa-moon"></i></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <%- body %>
+    </main>
+
+    <footer class="py-3 mt-5" style="background-color: var(--card-bg); color: var(--text-color); border-top: 1px solid var(--border-color);">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 ParkKaro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/main.js"></script>
+    <%- defineContent('scripts') %>
+</body>
+</html>

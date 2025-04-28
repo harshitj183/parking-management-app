@@ -1,0 +1,83 @@
+<%- contentFor('head') %>
+<!-- Additional styles for the error page -->
+
+<%- contentFor('body') %>
+<div class="mobile-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <a href="javascript:history.back()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h5 class="mb-0"><%= title || 'Error' %></h5>
+        </div>
+    </div>
+    
+    <!-- Error Content -->
+    <div class="error-container text-center">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h4 class="error-title">Oops! Something went wrong</h4>
+        <p class="error-message"><%= message %></p>
+        
+        <!-- Error Details (only in development) -->
+        <% if (process.env.NODE_ENV !== 'production' && locals.errorDetails) { %>
+            <div class="error-details">
+                <h6>Error Details:</h6>
+                <pre><%= errorDetails %></pre>
+            </div>
+        <% } %>
+        
+        <div class="error-actions">
+            <a href="javascript:history.back()" class="btn-outline">Go Back</a>
+            <a href="/" class="btn-primary">Go Home</a>
+        </div>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+
+<style>
+    .error-container {
+        padding: 40px 20px;
+    }
+    
+    .error-icon {
+        font-size: 60px;
+        color: #dc3545;
+        margin-bottom: 20px;
+    }
+    
+    .error-title {
+        margin-bottom: 15px;
+    }
+    
+    .error-message {
+        margin-bottom: 30px;
+        color: var(--text-light);
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .error-actions a {
+        flex: 1;
+    }
+    
+    .error-details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: left;
+        overflow-x: auto;
+    }
+    
+    .error-details pre {
+        margin: 0;
+        white-space: pre-wrap;
+    }
+</style>

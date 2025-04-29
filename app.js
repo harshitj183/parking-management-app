@@ -29,23 +29,18 @@ app.use(helmet({
 // Enable compression
 app.use(compression());
 
-// Connect to MongoDB - prioritize local MongoDB connection
+// Connect to MongoDB
 const mongooseOptions = {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
+    useUnifiedTopology: true
 };
 
-// Using localhost MongoDB for development and local deployment
-const MONGODB_URI = 'mongodb://localhost:27017/parking-management';
+// MongoDB connection string - using environment variable or default to localhost
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/parking-management';
 
 mongoose.connect(MONGODB_URI, mongooseOptions)
-.then(() => console.log('MongoDB connected successfully to local database'))
-.catch(err => {
-    console.error('MongoDB connection error:', err);
-    console.log('Make sure your local MongoDB server is running at mongodb://localhost:27017/');
-});
+.then(() => console.log('MongoDB connected successfully'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Production error handler
 if (isProduction) {

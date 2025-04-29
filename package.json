@@ -11,10 +11,13 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "seed": "node seed.js",
+    "seed:prod": "node seed-production.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "prepare": "husky install",
-    "deploy": "git push origin main"
+    "deploy": "git push origin main",
+    "deploy:render": "curl -X POST https://api.render.com/deploy/${RENDER_SERVICE_ID}?key=${RENDER_API_KEY}",
+    "build": "echo 'Build step completed'"
   },
   "keywords": [
     "parking",

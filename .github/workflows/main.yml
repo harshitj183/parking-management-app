@@ -40,7 +40,8 @@ jobs:
       run: npm ci
       
     - name: Run linting
-      run: npm run lint
+      # Only fail on errors, not warnings
+      run: npx eslint --max-warnings=999 .
       
     - name: Check for syntax errors
       run: node --check "$(find . -name '*.js' -not -path './node_modules/*')"

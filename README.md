@@ -4,17 +4,14 @@ A modern web-based parking management system built with Node.js, Express, and Mo
 
 ## Features
 
-- Real-time parking slot availability
-- QR code-based parking access
-- Multiple vehicle type support
+- Real-time parking slot availability tracking
 - Interactive map view of parking locations
 - Booking management system
 - Dark/Light theme support
 - User profiles and preferences
 - Saved vehicles functionality
-- Payment integration
-- Booking extensions
 - Mobile-responsive design
+- Amenity badges with animations
 
 ## Tech Stack
 
@@ -23,32 +20,30 @@ A modern web-based parking management system built with Node.js, Express, and Mo
 - **Frontend**: EJS templating, Bootstrap 5
 - **Maps**: Leaflet.js
 - **UI**: Custom CSS with Font Awesome icons
-- **Authentication**: JWT-based auth system
 
-## Prerequisites
+## Local Development Setup
+
+### Prerequisites
 
 - Node.js (v14 or higher)
-- MongoDB
-- npm or yarn
+- MongoDB (installed and running locally)
 
-## Installation
+### Installation
 
-1. Clone the repository:
+1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/parking-management-app.git
+git clone https://github.com/harshitj183/parking-management-app.git
+cd parking-management-app
 ```
 
 2. Install dependencies:
 ```bash
-cd parking-management-app
 npm install
 ```
 
-3. Create .env file in root directory and add your configuration:
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/parking-management
-```
+3. Make sure MongoDB is running on your local machine:
+   - MongoDB should be accessible at: `mongodb://localhost:27017/`
+   - The application will automatically create the `parking-management` database
 
 4. Seed the database with sample data:
 ```bash
@@ -60,19 +55,43 @@ npm run seed
 npm run dev
 ```
 
-## Production Deployment
-
-For production deployment:
-```bash
-npm start
+6. Access the application in your browser:
 ```
+http://localhost:3000
+```
+
+## Deployment
+
+This application is designed to work with a local MongoDB instance. To use it:
+
+1. Ensure MongoDB is installed and running on your machine
+2. Follow the installation steps above
+
+## Using the Application
+
+### Sample Parking Locations
+
+After seeding the database, you'll have access to the following sample parking locations:
+
+- **DLF CyberHub Parking** - Gurugram
+- **Ambience Mall Parking** - Gurugram
+- **IGI Airport Parking** - New Delhi
+
+### Features Available
+
+- Browse available parking locations on the map
+- View amenities and available spots for each location
+- Book a parking slot with vehicle details
+- Save vehicle information for future bookings
+- View and manage your bookings
+- Toggle between light and dark theme
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## License
@@ -82,8 +101,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Screenshots
 
 [Add your application screenshots here]
-
-## Contact
-
-Your Name - [@yourusername](https://twitter.com/yourusername)
-Project Link: [https://github.com/yourusername/parking-management-app](https://github.com/yourusername/parking-management-app)

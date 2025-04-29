@@ -44,7 +44,12 @@ jobs:
       run: npx eslint --max-warnings=999 .
       
     - name: Check for syntax errors
-      run: node --check "$(find . -name '*.js' -not -path './node_modules/*')"
+      run: |
+        # Check each JS file individually
+        find . -name "*.js" -not -path "./node_modules/*" | while read file; do
+          echo "Checking $file"
+          node --check "$file" || exit 1
+        done
 
   deploy:
     needs: build
